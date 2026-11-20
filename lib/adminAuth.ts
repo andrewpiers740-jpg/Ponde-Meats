@@ -1,9 +1,8 @@
 import { NextRequest } from 'next/server';
 
-export const DEFAULT_PASSCODE = 'ponde2026';
-
+// No default passcode: the admin stays locked until ADMIN_PASSCODE is set in the environment.
 export function getAdminPasscode(): string {
-  return process.env.ADMIN_PASSCODE || DEFAULT_PASSCODE;
+  return process.env.ADMIN_PASSCODE || '';
 }
 
 /**
