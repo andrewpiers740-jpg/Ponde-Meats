@@ -14,6 +14,8 @@ export default function AdminOrdersPage() {
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [storage, setStorage] = useState<{ mode: string; ok: boolean; orderCount?: number; error?: string } | null>(null);
+  const [loadError, setLoadError] = useState<string>('');
 
   useEffect(() => {
     let active = true;
@@ -26,9 +28,13 @@ export default function AdminOrdersPage() {
         if (active && res.ok) {
           const data = await res.json();
           setOrders(data.orders || []);
+          setStorage(data.storage || null);
+          setLoadError('');
+        } else if (active) {
+          setLoadError('Could not load orders (HTTP ' + res.status + ').');
         }
       } catch {
-        // ignore
+        if (active) setLoadError('Could not reach the orders service.');
       } finally {
         if (active) setLoading(false);
       }
@@ -78,6 +84,23 @@ export default function AdminOrdersPage() {
           </p>
         </div>
       </div>
+
+      {loadError && (
+        <div className="p-3 rounded-lg border border-red-200 bg-red-50 text-xs text-red-800">{loadError}</div>
+      )}
+      {storage && (
+        <div
+          className={
+            storage.ok
+              ? 'p-3 rounded-lg border text-xs border-emerald-200 bg-emerald-50 text-emerald-900'
+              : 'p-3 rounded-lg border text-xs border-amber-300 bg-amber-50 text-amber-900'
+          }
+        >
+          {storage.ok
+            ? 'Order storage: connected (Upstash Redis), ' + (storage.orderCount ?? 0) + ' saved order(s).'
+            : 'Order storage problem: ' + (storage.error || 'not connected') + '. New orders are only being emailed, not saved to this dashboard.'}
+        </div>
+      )}
 
       {/* Filter toolbar */}
       <div className="bg-white p-4 rounded-xl border border-neutral-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">

@@ -52,120 +52,6 @@ declare global {
 
 if (!globalThis.__memoryOrders) {
   globalThis.__memoryOrders = new Map<string, OrderRecord>();
-
-  // Seed sample initial orders
-  const sampleOrders: OrderRecord[] = [
-    {
-      id: '32975',
-      orderNumber: '32975',
-      createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-      customerName: 'Marcus Vance',
-      email: 'm.vance@murraylandsresort.com.au',
-      phone: '0412 884 921',
-      address: '14 Riverside Way',
-      suburb: 'Murray Bridge',
-      state: 'SA',
-      postcode: '5253',
-      preferredDeliveryDate: '2026-11-21',
-      notes: 'Please buzz side loading dock for refrigerated dropoff.',
-      items: [
-        {
-          id: 'beef-tomahawk-ribeye',
-          name: 'Grass-Fed Beef Ribeye & Tomahawk Steaks',
-          variantName: 'Bulk Master Carton (5kg)',
-          quantity: 2,
-          price: 235,
-        },
-        {
-          id: 'lamb-french-rack-cutlets',
-          name: 'Pasture-Raised Lamb Cutlets & French Racks',
-          variantName: 'Wholesale Foodservice Carton (5kg)',
-          quantity: 1,
-          price: 220,
-        },
-      ],
-      subtotal: 690,
-      discount: 34.5,
-      shipping: 20,
-      total: 675.5,
-      paymentMethod: 'Bank Transfer (OSKO)',
-      channel: 'both',
-      status: 'Pending Payment',
-    },
-    {
-      id: '32976',
-      orderNumber: '32976',
-      createdAt: new Date(Date.now() - 3600000 * 18).toISOString(),
-      customerName: 'Elena Rostova',
-      email: 'elena.rostova@gmail.com',
-      phone: '0488 321 004',
-      address: '88 The Parade',
-      suburb: 'Norwood',
-      state: 'SA',
-      postcode: '5067',
-      preferredDeliveryDate: '2026-11-20',
-      notes: 'Leave in insulated box on front porch if unattended.',
-      items: [
-        {
-          id: 'goat-whole-carcass',
-          name: 'Whole Australian Boer Goat Carcass (Custom Cut)',
-          variantName: 'Whole Boer Goat Carcass (~16-20kg hung weight, custom cut)',
-          quantity: 1,
-          price: 340,
-        },
-        {
-          id: 'beef-family-freezer-box',
-          name: 'Grass-Fed Beef Family Freezer Box (10kg)',
-          variantName: 'Standard Family Box (10kg)',
-          quantity: 1,
-          price: 240,
-        },
-      ],
-      subtotal: 580,
-      discount: 29.0,
-      shipping: 20,
-      total: 571.0,
-      paymentMethod: 'PayID',
-      channel: 'whatsapp',
-      status: 'Payment Confirmed',
-      paymentDetailsSent: true,
-      paymentDetailsSentAt: new Date(Date.now() - 3600000 * 16).toISOString(),
-      paymentConfirmedAt: new Date(Date.now() - 3600000 * 12).toISOString(),
-    },
-    {
-      id: '32977',
-      orderNumber: '32977',
-      createdAt: new Date(Date.now() - 3600000 * 30).toISOString(),
-      customerName: 'Harrison Forde',
-      email: 'hforde@adelaidebutchers.com.au',
-      phone: '0423 719 440',
-      address: '210 Main North Rd',
-      suburb: 'Prospect',
-      state: 'SA',
-      postcode: '5082',
-      notes: 'Wholesale side order for retail butchery display.',
-      items: [
-        {
-          id: 'beef-whole-carcass-side',
-          name: 'Whole Beef Carcass & Side of Beef (Bulk Hung Weight)',
-          variantName: 'Side of Beef (~120kg hung weight, custom cut & packed)',
-          quantity: 1,
-          price: 1350,
-        },
-      ],
-      subtotal: 1350,
-      discount: 67.5,
-      shipping: 0, // Free delivery over $1000
-      total: 1282.5,
-      paymentMethod: 'Bank Transfer (OSKO)',
-      channel: 'email',
-      status: 'Dispatched',
-      paymentDetailsSent: true,
-      paymentConfirmedAt: new Date(Date.now() - 3600000 * 24).toISOString(),
-    },
-  ];
-
-  sampleOrders.forEach((o) => globalThis.__memoryOrders!.set(o.id, o));
 }
 
 export async function saveOrder(order: OrderRecord): Promise<OrderRecord> {
@@ -173,13 +59,35 @@ export async function saveOrder(order: OrderRecord): Promise<OrderRecord> {
   if (redis) {
     try {
       await redis.hset(REDIS_ORDERS_KEY, { [order.id]: JSON.stringify(order) });
+      console.log(`[orders] saved order ${order.id} to Redis`);
       return order;
     } catch (e) {
-      console.warn('Redis hset error, saving to memory fallback:', e);
+      console.error('[orders] Redis hset error, saving to memory fallback:', e);
     }
+  } else {
+    console.error('[orders] Redis is not configured; order is kept in memory only and will be lost');
   }
   globalThis.__memoryOrders!.set(order.id, order);
   return order;
+}
+
+export interface StorageStatus {
+  mode: 'redis' | 'memory';
+  ok: boolean;
+  orderCount?: number;
+  error?: string;
+}
+
+/** Reports which storage backend is active and whether it is reachable (no secrets included). */
+export async function getStorageStatus(): Promise<StorageStatus> {
+  const redis = getRedis();
+  if (!redis) return { mode: 'memory', ok: false, error: 'Redis environment variables not found' };
+  try {
+    const count = await redis.hlen(REDIS_ORDERS_KEY);
+    return { mode: 'redis', ok: true, orderCount: count };
+  } catch (e) {
+    return { mode: 'redis', ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
 }
 
 export async function listOrders(): Promise<OrderRecord[]> {
@@ -187,16 +95,14 @@ export async function listOrders(): Promise<OrderRecord[]> {
   if (redis) {
     try {
       const records = await redis.hgetall<Record<string, string | OrderRecord>>(REDIS_ORDERS_KEY);
-      if (records) {
-        const parsed: OrderRecord[] = Object.values(records).map((item) =>
-          typeof item === 'string' ? JSON.parse(item) : item
-        );
-        return parsed.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      }
+      const parsed: OrderRecord[] = Object.values(records || {}).map((item) =>
+        typeof item === 'string' ? JSON.parse(item) : item
+      );
+      return parsed.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     } catch (e) {
-      console.warn('Redis hgetall error, reading memory fallback:', e);
+      console.error('[orders] Redis hgetall error, reading memory fallback:', e);
     }
   }
 

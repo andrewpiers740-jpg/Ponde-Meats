@@ -26,42 +26,6 @@ declare global {
 
 if (!globalThis.__memoryEnquiries) {
   globalThis.__memoryEnquiries = new Map<string, EnquiryRecord>();
-
-  // Sample initial enquiries
-  const sampleEnquiries: EnquiryRecord[] = [
-    {
-      id: 'enq-101',
-      createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-      type: 'wholesale',
-      name: 'Julian Croft',
-      email: 'j.croft@riverlandhospitality.com.au',
-      phone: '0421 990 311',
-      businessName: 'Riverland Hospitality Group',
-      categoryInterest: 'Beef, Lamb & Boer Goat',
-      volumeInterest: '100kg - 250kg weekly',
-      subject: 'Weekly chilled meat supply for 3 bistro locations',
-      message:
-        'Hi Ponde Meats team, We operate three bistro venues across the Riverland and Murraylands. We are seeking regular weekly delivery of ribeye tomahawks, lamb cutlets and diced Boer goat. Could you provide your wholesale carton rate sheet and delivery run schedule?',
-      status: 'new',
-    },
-    {
-      id: 'enq-102',
-      createdAt: new Date(Date.now() - 3600000 * 22).toISOString(),
-      type: 'contact',
-      name: 'Sarah Lindqvist',
-      email: 'sarah.lindqvist@outlook.com',
-      phone: '0434 502 119',
-      subject: 'Custom cut whole lamb carcass question',
-      message:
-        'Hello, I would like to order a whole lamb carcass for next Friday. Can the leg roasts be boned and rolled, and the chops packed in bags of 4? Also confirming if you deliver directly to Adelaide Hills.',
-      status: 'replied',
-      repliedAt: new Date(Date.now() - 3600000 * 20).toISOString(),
-      replyMessage:
-        'Hi Sarah, yes absolutely! All our whole lamb carcasses are custom cut and packed to your exact specs at no extra charge. We deliver to the Adelaide Hills weekly on Tuesdays and Fridays.',
-    },
-  ];
-
-  sampleEnquiries.forEach((e) => globalThis.__memoryEnquiries!.set(e.id, e));
 }
 
 export async function saveEnquiry(enquiry: EnquiryRecord): Promise<EnquiryRecord> {
@@ -71,7 +35,7 @@ export async function saveEnquiry(enquiry: EnquiryRecord): Promise<EnquiryRecord
       await redis.hset(REDIS_ENQUIRIES_KEY, { [enquiry.id]: JSON.stringify(enquiry) });
       return enquiry;
     } catch (e) {
-      console.warn('Redis hset enquiry error, saving to memory:', e);
+      console.error('Redis hset enquiry error, saving to memory:', e);
     }
   }
   globalThis.__memoryEnquiries!.set(enquiry.id, enquiry);
@@ -92,7 +56,7 @@ export async function listEnquiries(): Promise<EnquiryRecord[]> {
         );
       }
     } catch (e) {
-      console.warn('Redis hgetall enquiry error, reading memory:', e);
+      console.error('Redis hgetall enquiry error, reading memory:', e);
     }
   }
 
@@ -111,7 +75,7 @@ export async function getEnquiry(id: string): Promise<EnquiryRecord | null> {
         return typeof record === 'string' ? JSON.parse(record) : record;
       }
     } catch (e) {
-      console.warn('Redis hget enquiry error:', e);
+      console.error('Redis hget enquiry error:', e);
     }
   }
   return globalThis.__memoryEnquiries!.get(id) || null;
@@ -137,7 +101,7 @@ export async function deleteEnquiry(id: string): Promise<boolean> {
     try {
       await redis.hdel(REDIS_ENQUIRIES_KEY, id);
     } catch (e) {
-      console.warn('Redis hdel enquiry error:', e);
+      console.error('Redis hdel enquiry error:', e);
     }
   }
   return globalThis.__memoryEnquiries!.delete(id);

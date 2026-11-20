@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminPasscode } from '@/lib/adminAuth';
-import { listOrders } from '@/lib/orderStore';
+import { listOrders, getStorageStatus } from '@/lib/orderStore';
 
 export async function GET(req: NextRequest) {
   if (!checkAdminPasscode(req)) {
@@ -8,9 +8,11 @@ export async function GET(req: NextRequest) {
   }
 
   const orders = await listOrders();
+  const storage = await getStorageStatus();
   return NextResponse.json({
     ok: true,
     total: orders.length,
     orders,
+    storage,
   });
 }
