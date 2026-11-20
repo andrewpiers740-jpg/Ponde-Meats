@@ -29,12 +29,15 @@ export default function ProductCard({ product, compact = false }: ProductCardPro
   const [isAdded, setIsAdded] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
 
-  const defaultVariant = product.variants[0] || {
-    id: 'default',
-    name: 'Standard',
-    price: product.price,
-    unit: product.unit,
-  };
+  const [variantId, setVariantId] = useState<string>(product.variants[0]?.id ?? 'default');
+  const defaultVariant =
+    product.variants.find((v) => v.id === variantId) ||
+    product.variants[0] || {
+      id: 'default',
+      name: 'Standard',
+      price: product.price,
+      unit: product.unit,
+    };
 
   const totalPrice = defaultVariant.price * quantity;
   const oskoDiscount = Number((totalPrice * 0.05).toFixed(2));
@@ -160,7 +163,11 @@ export default function ProductCard({ product, compact = false }: ProductCardPro
               <span className="text-base font-extrabold font-mono text-neutral-900">
                 {money(defaultVariant.price)}
               </span>
-              <span className="text-[10px] text-neutral-500 ml-1">/{product.unit.replace('per ', '')}</span>
+              {defaultVariant.weightKg ? (
+                <span className="text-[10px] text-neutral-500 block">
+                  {money(defaultVariant.price / defaultVariant.weightKg)} per kg
+                </span>
+              ) : null}
             </div>
             <div className="text-right">
               <span className="text-[10px] text-emerald-700 font-bold block">
@@ -171,17 +178,41 @@ export default function ProductCard({ product, compact = false }: ProductCardPro
               </span>
               {quantity > 1 && (
                 <span className="text-[10px] text-neutral-400 block font-mono">
-                  ({quantity} {product.unit.replace('per ', '')})
+                  (for {quantity} packs)
                 </span>
               )}
             </div>
           </div>
 
-          {/* Interactive Quantity Range Selector */}
+          {/* Pack size selector (same options as the product page) */}
+          {product.variants.length > 1 && (
+            <div className="mb-2">
+              <label htmlFor={`variant-${product.id}`} className="text-[11px] font-medium text-neutral-700 block mb-1">
+                Pack size:
+              </label>
+              <select
+                id={`variant-${product.id}`}
+                value={defaultVariant.id}
+                onChange={(e) => setVariantId(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full h-8 text-[11px] border border-neutral-300 rounded bg-white px-2 text-neutral-900 focus:outline-none focus:ring-1 focus:ring-[#881326]"
+              >
+                {product.variants.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.name} – {money(v.price)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Interactive Quantity Selector */}
           <div className="mb-3">
             <div className="flex items-center justify-between text-[11px] font-medium text-neutral-700 mb-1">
-              <span>Quantity Range:</span>
-              <span className="font-mono font-bold text-neutral-900">{quantity} {product.unit.replace('per ', '')}</span>
+              <span>Number of packs:</span>
+              <span className="font-mono font-bold text-neutral-900">
+                {quantity} × {defaultVariant.weightKg ? `${defaultVariant.weightKg}kg` : 'pack'} = {money(totalPrice)}
+              </span>
             </div>
             
             <div className="flex items-center gap-1.5">
@@ -247,7 +278,7 @@ export default function ProductCard({ product, compact = false }: ProductCardPro
                       : 'bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-100'
                   }`}
                 >
-                  {preset}kg
+                  ×{preset}
                 </button>
               ))}
             </div>

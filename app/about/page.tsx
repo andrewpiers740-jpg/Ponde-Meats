@@ -1,9 +1,11 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
 import { SITE } from '@/src/config/site';
 import { ShieldCheck, Snowflake, MapPin, Award, CheckCircle, ExternalLink, ArrowRight } from 'lucide-react';
 
+export const metadata: Metadata = { title: 'About Ponde Meats – Cowirra SA Wholesale Butcher', description: 'Ponde Meats is a Cowirra SA wholesale butcher founded in 2022, supplying pasture-raised beef, lamb, Boer goat and mutton across South Australia.', alternates: { canonical: '/about' } };
 export default function AboutPage() {
   return (
     <div className="bg-white min-h-screen">

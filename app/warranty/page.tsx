@@ -1,8 +1,10 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE } from '@/src/config/site';
 import { ShieldCheck, Snowflake, CheckCircle } from 'lucide-react';
 
+export const metadata: Metadata = { title: 'Freshness Guarantee', description: 'Ponde Meats cold-chain freshness guarantee: temperature-verified delivery with replacement or refund if your order arrives compromised.', alternates: { canonical: '/warranty' } };
 export default function WarrantyPage() {
   return (
     <div className="bg-white min-h-screen">

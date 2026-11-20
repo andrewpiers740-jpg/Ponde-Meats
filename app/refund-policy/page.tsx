@@ -1,7 +1,9 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE } from '@/src/config/site';
 
+export const metadata: Metadata = { title: 'Refund Policy', description: 'Refund and replacement policy for Ponde Meats perishable orders, including the 48-hour inspection window for cold-chain deliveries.', alternates: { canonical: '/refund-policy' } };
 export default function RefundPolicyPage() {
   return (
     <div className="bg-white min-h-screen">

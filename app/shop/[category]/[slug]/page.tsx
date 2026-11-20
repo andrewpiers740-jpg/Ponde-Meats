@@ -7,6 +7,7 @@ import { notFound, useParams } from 'next/navigation';
 import { PRODUCTS, SITE, ProductVariant } from '@/src/config/site';
 import { useCart } from '@/lib/cartContext';
 import { money } from '@/lib/order';
+import { getProductSections } from '@/src/config/product-copy';
 import { waLinkTo } from '@/lib/whatsapp';
 import {
   ArrowLeft,
@@ -64,7 +65,7 @@ export default function ProductDetailPage() {
 I would like to order:
 *${product.name}*
 • Selection: ${selectedVariant.name}
-• Quantity: ${quantity}
+• Quantity: ${quantity} × ${selectedVariant.name}${selectedVariant.weightKg ? ` (${Number((selectedVariant.weightKg * quantity).toFixed(2))}kg total)` : ""}
 • Total: ${money(currentPrice * quantity)} (less 5% with OSKO/PayID = ${money(finalPrice * quantity)})
 
 Could you please confirm availability and provide transfer instructions for refrigerated delivery? Thank you!`;
@@ -173,6 +174,11 @@ Could you please confirm availability and provide transfer instructions for refr
                   <span className="text-3xl font-extrabold font-mono text-neutral-900">
                     {money(currentPrice)}
                   </span>
+                  {selectedVariant.weightKg ? (
+                    <span className="text-[11px] text-neutral-500 block mt-0.5">
+                      {money(currentPrice / selectedVariant.weightKg)} per kg · {selectedVariant.name}
+                    </span>
+                  ) : null}
                 </div>
                 <div className="text-right">
                   <span className="text-xs text-emerald-700 font-bold block">
@@ -233,9 +239,9 @@ Could you please confirm availability and provide transfer instructions for refr
             <div className="space-y-3 pt-2">
               <div className="p-3.5 bg-neutral-50 rounded-xl border border-neutral-200">
                 <div className="flex items-center justify-between text-xs font-semibold text-neutral-800 mb-2">
-                  <span>Select Quantity Range:</span>
+                  <span>Number of packs / units:</span>
                   <span className="font-mono text-sm font-extrabold text-[#881326]">
-                    {quantity} {product.unit.replace('per ', '')} ({money(currentPrice * quantity)})
+                    {quantity} × {selectedVariant.name}{selectedVariant.weightKg ? ' = ' + Number((selectedVariant.weightKg * quantity).toFixed(2)) + 'kg' : ''} ({money(currentPrice * quantity)})
                   </span>
                 </div>
 
@@ -285,7 +291,7 @@ Could you please confirm availability and provide transfer instructions for refr
                             : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-100'
                         }`}
                       >
-                        {preset}kg
+                        ×{preset}
                       </button>
                     ))}
                   </div>
@@ -298,15 +304,25 @@ Could you please confirm availability and provide transfer instructions for refr
                     min="1"
                     max="50"
                     value={Math.min(50, quantity)}
+                    aria-label="Number of packs"
                     onChange={(e) => setQuantity(Number(e.target.value))}
                     className="w-full accent-[#881326] cursor-pointer"
                   />
-                  <div className="flex justify-between text-[10px] text-neutral-400 font-mono">
-                    <span>1kg</span>
-                    <span>10kg</span>
-                    <span>25kg</span>
-                    <span>50kg</span>
+                  <div className="relative h-8 mt-1 text-[10px] text-neutral-500 font-mono" aria-hidden="true">
+                    {[1, 10, 20, 30, 40, 50].map((tick) => (
+                      <span
+                        key={tick}
+                        className={`absolute top-0 flex flex-col items-center -translate-x-1/2 ${quantity === tick ? 'text-[#881326] font-bold' : ''}`}
+                        style={{ left: `calc(8px + (100% - 16px) * ${(tick - 1) / 49})` }}
+                      >
+                        <span className="block w-px h-1.5 bg-neutral-300" />
+                        {tick}
+                      </span>
+                    ))}
                   </div>
+                  <p className="text-[11px] text-neutral-600 text-center">
+                    Selected: <strong className="text-[#881326]">{quantity}</strong> {quantity === 1 ? 'pack' : 'packs'} (drag the slider or use the buttons)
+                  </p>
                 </div>
               </div>
 
@@ -409,6 +425,25 @@ Could you please confirm availability and provide transfer instructions for refr
             </div>
           </div>
         </div>
+
+        {/* Full sales description */}
+        <section className="mt-12 border-t border-neutral-200 pt-10 max-w-3xl" aria-labelledby="about-product">
+          <h2 id="about-product" className="text-xl sm:text-2xl font-extrabold text-neutral-900 tracking-tight mb-4">
+            About {product.name}
+          </h2>
+          <div className="space-y-4 text-sm sm:text-base text-neutral-700 leading-relaxed">
+            {getProductSections(product).map((section, i) => (
+              <div key={i} className="space-y-4">
+                {section.heading && (
+                  <h3 className="text-base sm:text-lg font-bold text-neutral-900 pt-3">{section.heading}</h3>
+                )}
+                {section.paragraphs.map((para, j) => (
+                  <p key={j}>{para}</p>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -3289,7 +3289,7 @@ export const PRODUCTS: Product[] = [
     "price": 8,
     "unit": "per bag",
     "badge": "Best Value",
-    "image": "/images/products/beef-chuck-bones.jpg",
+    "image": "/images/products/beef_short_ribs_1795133809111.jpg",
     "variants": [
       {
         "id": "bcb-bag",
@@ -3418,7 +3418,7 @@ export const PRODUCTS: Product[] = [
     "subcategory": "single-cuts",
     "description": "Pristine cleaned and washed Australian beef honeycomb tripe (reticulum). Tender honeycomb texture for menudo, pho, and dim sum.",
     "longDescription": "Thoroughly cleaned, blanched, and prepared to the highest abattoir hygiene standards. Absorbs spicy broths and sauces with magnificent chew.",
-    "price": 15,
+    "price": 14.8,
     "unit": "per kg",
     "badge": "Popular",
     "image": "/images/products/beef-honeycomb-tripe.jpg",
@@ -3427,14 +3427,14 @@ export const PRODUCTS: Product[] = [
         "id": "bht-1kg",
         "name": "1kg Honeycomb Tripe Pack",
         "weightKg": 1,
-        "price": 15,
+        "price": 14.8,
         "unit": "per pack"
       },
       {
         "id": "bht-3kg",
         "name": "3kg Bulk Pack",
         "weightKg": 3,
-        "price": 45,
+        "price": 44.4,
         "unit": "per pack"
       }
     ],
@@ -3462,7 +3462,7 @@ export const PRODUCTS: Product[] = [
     "subcategory": "single-cuts",
     "description": "Cleaned Australian beef omasum tripe (book tripe / Bible tripe). Thin leaf-like folds prized for Chinese Sichuan hotpot.",
     "longDescription": "Cleaned and prepared fresh. Flash-cook in bubbling hotpot broth for 15 seconds for crisp, tender texture.",
-    "price": 15,
+    "price": 14.8,
     "unit": "per kg",
     "badge": "Popular",
     "image": "/images/products/beef-omasum-tripe.jpg",
@@ -3471,14 +3471,14 @@ export const PRODUCTS: Product[] = [
         "id": "bot-1kg",
         "name": "1kg Omasum Tripe Pack",
         "weightKg": 1,
-        "price": 15,
+        "price": 14.8,
         "unit": "per pack"
       },
       {
         "id": "bot-3kg",
         "name": "3kg Hotpot Pack",
         "weightKg": 3,
-        "price": 45,
+        "price": 44.4,
         "unit": "per pack"
       }
     ],

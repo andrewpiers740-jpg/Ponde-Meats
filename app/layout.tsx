@@ -11,7 +11,9 @@ import ChatHub from '@/components/ChatHub';
 import JsonLd from '@/components/JsonLd';
 
 export const metadata: Metadata = {
-  title: `${SITE.name} – ${SITE.tagline}`,
+  metadataBase: new URL(`https://${SITE.domain}`),
+  alternates: { canonical: './' },
+  title: { default: `${SITE.name} – ${SITE.tagline}`, template: `%s | ${SITE.name}` },
   description: `${SITE.subTagline}. Minimum order $200, free delivery over $1000, 5% OSKO/PayID discount.`,
   openGraph: {
     title: `${SITE.name} – Wholesale & Bulk Butcher SA`,

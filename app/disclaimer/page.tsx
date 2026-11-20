@@ -1,8 +1,10 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE } from '@/src/config/site';
 import { ExternalLink, ShieldCheck, AlertTriangle } from 'lucide-react';
 
+export const metadata: Metadata = { title: 'Disclaimer', description: 'Product and website disclaimer for Ponde Meats, a Cowirra SA wholesale butcher supplying beef, lamb, goat and mutton.', alternates: { canonical: '/disclaimer' } };
 export default function DisclaimerPage() {
   return (
     <div className="bg-white min-h-screen">

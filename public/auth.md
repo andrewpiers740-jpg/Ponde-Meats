@@ -1,4 +1,6 @@
-# Authentication Guide – Ponde Meats
+# Auth.md
+
+Ponde Meats – Authentication Guide
 
 ## 1. Public Storefront & Orders
 - **Customer Checkout**: No password required. Customers provide Name, Email, Phone, and Delivery Address.

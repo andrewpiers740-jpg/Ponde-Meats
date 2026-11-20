@@ -1,7 +1,9 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE } from '@/src/config/site';
 
+export const metadata: Metadata = { title: 'Terms & Conditions', description: 'Terms and conditions for ordering wholesale meat from Ponde Meats in Cowirra SA, including payment, delivery and cold-chain rules.', alternates: { canonical: '/terms' } };
 export default function TermsPage() {
   return (
     <div className="bg-white min-h-screen">

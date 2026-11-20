@@ -1,9 +1,11 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SITE } from '@/src/config/site';
 import { Snowflake, Truck, ShieldCheck, MapPin, Clock } from 'lucide-react';
 import { money } from '@/lib/order';
 
+export const metadata: Metadata = { title: 'Shipping Policy', description: 'Refrigerated delivery rates, areas and times for Ponde Meats orders: $20 flat fee, free delivery over $1000 across South Australia.', alternates: { canonical: '/shipping-policy' } };
 export default function ShippingPolicyPage() {
   return (
     <div className="bg-white min-h-screen">

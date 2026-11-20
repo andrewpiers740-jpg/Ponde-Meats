@@ -29,8 +29,8 @@ export default function ShopIndexPage() {
       }
       return true;
     }).sort((a, b) => {
-      if (sortBy === 'price-asc') return a.price - b.price;
-      if (sortBy === 'price-desc') return b.price - a.price;
+      if (sortBy === 'price-asc') return (a.variants[0]?.price ?? a.price) - (b.variants[0]?.price ?? b.price);
+      if (sortBy === 'price-desc') return (b.variants[0]?.price ?? b.price) - (a.variants[0]?.price ?? a.price);
       return b.reviewCount - a.reviewCount;
     });
   }, [selectedCategory, selectedSubcategory, searchQuery, sortBy]);
