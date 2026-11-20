@@ -1,0 +1,6 @@
+{
+  "acpVersion": "1.0",
+  "store": "Ponde Meats",
+  "domain": "pondemeats.com",
+  "catalogEndpoint": "/api/acp/catalog"
+}

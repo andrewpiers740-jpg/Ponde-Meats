@@ -1,0 +1,6 @@
+{
+  "ucp": "1.0",
+  "provider": "Ponde Meats",
+  "domain": "pondemeats.com",
+  "servicesEndpoint": "/api/ucp/services"
+}

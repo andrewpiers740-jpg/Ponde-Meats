@@ -1,0 +1,6 @@
+{
+  "name": "Ponde Meats - Wholesale Butcher SA",
+  "description": "South Australia's premier wholesale and bulk butcher in Cowirra SA. Premium grass-fed beef, lamb, goat, and mutton in single cuts, curated meat boxes, and whole carcasses with refrigerated delivery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

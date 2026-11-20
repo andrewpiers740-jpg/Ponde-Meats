@@ -1,0 +1,5 @@
+{
+  "issuer": "https://pondemeats.com",
+  "authorization_endpoint": "https://pondemeats.com/admin",
+  "token_endpoint": "https://pondemeats.com/api/admin/orders"
+}

@@ -1,0 +1,12 @@
+{
+  "skills": [
+    {
+      "id": "wholesale-meat-catalog",
+      "name": "Wholesale Meat Catalog Query",
+      "description": "Fetch prices, cut specs, hung weights and cold-chain availability for South Australian beef, lamb, goat, and mutton.",
+      "parameters": {
+        "category": "beef | lamb | goat | mutton"
+      }
+    }
+  ]
+}

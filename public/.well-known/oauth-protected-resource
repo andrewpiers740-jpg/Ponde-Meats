@@ -1,0 +1,4 @@
+{
+  "resource": "https://pondemeats.com",
+  "authorization_servers": ["https://pondemeats.com"]
+}

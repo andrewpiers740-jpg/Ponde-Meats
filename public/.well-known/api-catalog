@@ -1,0 +1,25 @@
+{
+  "catalog": {
+    "version": "1.0",
+    "apis": [
+      {
+        "id": "products",
+        "name": "Ponde Meats Wholesale Products API",
+        "description": "Lists Australian beef, lamb, Boer goat and mutton cuts and bulk packs.",
+        "url": "/api/products"
+      },
+      {
+        "id": "search",
+        "name": "Meat Search API",
+        "description": "Searches butcher products by keyword.",
+        "url": "/api/search"
+      },
+      {
+        "id": "mcp",
+        "name": "Model Context Protocol Endpoint",
+        "description": "Live streamable MCP tool server.",
+        "url": "/api/mcp"
+      }
+    ]
+  }
+}

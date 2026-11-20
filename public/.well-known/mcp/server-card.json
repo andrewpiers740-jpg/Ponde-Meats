@@ -1,0 +1,16 @@
+{
+  "name": "Ponde Meats MCP Server",
+  "version": "1.0.0",
+  "description": "Live MCP tool interface for Ponde Meats wholesale butcher abattoir.",
+  "endpoint": "/api/mcp",
+  "tools": [
+    {
+      "name": "get_products",
+      "description": "List meat cuts and carcass boxes by category."
+    },
+    {
+      "name": "get_butcher_info",
+      "description": "Get Cowirra SA abattoir location, ABN and cold-chain freight specifications."
+    }
+  ]
+}
