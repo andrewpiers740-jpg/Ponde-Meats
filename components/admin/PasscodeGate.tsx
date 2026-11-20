@@ -6,22 +6,33 @@ import { Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import { SITE } from '@/src/config/site';
 
 export default function PasscodeGate({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, login } = useAdminPasscode();
+  const { isAuthenticated, checking, login } = useAdminPasscode();
   const [inputCode, setInputCode] = useState('');
   const [error, setError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center text-xs text-neutral-400">
+        Checking access…
+      </div>
+    );
+  }
 
   if (isAuthenticated) {
     return <>{children}</>;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputCode.trim().length > 0) {
-      const ok = login(inputCode);
-      if (!ok) setError(true);
-    } else {
+    if (inputCode.trim().length === 0) {
       setError(true);
+      return;
     }
+    setSubmitting(true);
+    const ok = await login(inputCode);
+    setSubmitting(false);
+    if (!ok) setError(true);
   };
 
   return (
@@ -68,6 +79,7 @@ export default function PasscodeGate({ children }: { children: React.ReactNode }
 
           <button
             type="submit"
+            disabled={submitting}
             className="w-full py-2.5 px-4 bg-[#881326] hover:bg-[#721020] text-white font-semibold text-xs rounded-md flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
             <span>Unlock Admin Hub</span>
